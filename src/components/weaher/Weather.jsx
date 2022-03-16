@@ -1,4 +1,6 @@
 import React from "react";
+import SingleDay from "./SingleDay";
+import DayCard from "./DayCard";
 import weather01 from 'icons/weather/01.svg'
 import weather02 from 'icons/weather/02.svg'
 import weather03 from 'icons/weather/03.svg'
@@ -9,43 +11,6 @@ import weather11 from 'icons/weather/11.svg'
 import weather13 from 'icons/weather/13.svg'
 import weather50 from 'icons/weather/50.svg'
 
-
-function DayCard(props) {
-
-    const date = new Date(props.day[0].dt * 1000).getDate()
-
-    let minTemp = 1000
-    let maxTemp = -1000
-
-    props.day.forEach(hour => {
-        if (hour.main.temp_min < minTemp) minTemp = hour.main.temp_min
-        if (hour.main.temp_max > maxTemp) maxTemp = hour.main.temp_max
-    })
-    console.log(props.day)
-    return (
-        <div data-index={props.index} onClick={e => props.showDay(props.index)} className="days__card">
-            <h2>Число - {date}</h2>
-            <p>Максимальная температура: {Math.round(maxTemp)}</p>
-            <p>Минимальная температура: {Math.round(minTemp)}</p>
-        </div>
-    )
-}
-
-function SingleDay(props) {
-
-    return (
-        <div>
-            {props.index}
-            {
-                props.day.map(hour => {
-                    let url = hour.weather[0].icon.slice(0,2)
-                    console.log(url);
-                    return <img src={props.state.icons[url]} alt=""/>
-                })
-            }
-        </div>
-    )
-}
 
 class WeatherContainer extends React.Component {
 
@@ -70,7 +35,7 @@ class WeatherContainer extends React.Component {
 
     componentDidMount() {
         // https://api.openweathermap.org/data/2.5/weather?q=Moscow&lang=ru&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27
-        const weatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=Paris&lang=eng&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27";
+        const weatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=Moscow&lang=ru&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27";
 
         fetch(weatherURL)
             .then(res => res.json())
@@ -91,7 +56,6 @@ class WeatherContainer extends React.Component {
     }
 
     getDays = () => {
-
         const daysObj = {}
 
         this.state.list.forEach(e => {
@@ -105,17 +69,15 @@ class WeatherContainer extends React.Component {
         const days = Object.keys(daysObj).map(function (key) {
             return daysObj[key];
         });
-        // console.log(days);
 
         const sortedDays = days.sort(function (a, b) {
             return a[0].dt - b[0].dt;
         })
-        // console.log(days);
+
         return sortedDays
     }
 
     showDay = (index) => {
-        console.log(index);
         this.setState({ activeDay: index })
     }
 
@@ -124,7 +86,8 @@ class WeatherContainer extends React.Component {
             <div className="container">
                 <div className="days">
                     {
-                        this.getDays().map((day, i) => {
+                        //slice ограничивает вывод на четыре дня вперед
+                        this.getDays().slice(0,5).map((day, i) => {
 
                             return <DayCard index={i} key={i} day={day} showDay={this.showDay} state={this.state}/>
                         })
@@ -132,6 +95,7 @@ class WeatherContainer extends React.Component {
                 </div>
 
                 <div className="day">
+                    <div className="today"></div>
                     {this.getDays().map((day, i) => {
                         return i === this.state.activeDay && <SingleDay index={i} key={i} day={day} state={this.state}/>
                     })}

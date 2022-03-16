@@ -7,7 +7,7 @@ import LoginControl from './components/LoginControl';
 import NameForm from './components/NameForm';
 import Calculator from './components/Calculator';
 import FilterableProductTable from './components/Products';
-import WeatherContainer from './components/Weather';
+import WeatherContainer from './components/weaher/Weather';
 
 
 //http://studyjavascript.blogspot.com/2019/08/react-5.html
