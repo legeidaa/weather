@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Karla:wght@300;400;500;700&display=swap');
+@import 'bootstrap-reboot.css' ;
+
+@mixin glass {
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 15px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+html {
+    box-sizing: border-box;
+    min-height: 100vh;
+    font-family: 'Karla', sans-serif;
+}
+
+body {
+    background: linear-gradient(170deg, #2f6ed3 5%, #5095e4 20%, #5095e4 60%, #736ed3 95%);
+    min-height: 100%;
+    
+}
+
+.container {
+    display: grid;
+    grid-template: auto / 2fr 8fr;
+}
+
+.days {
+    display: flex;
+    height: 100vh;
+    justify-content: space-between;
+    flex-direction: column;
+    border-right: 1px solid #fff;
+    &__card {
+        height: 100%;
+        &:not(:first-child) {
+            border-top: 1px solid #fff;
+        }
+    }
+}
+
