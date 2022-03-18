@@ -10,6 +10,8 @@ import weather10 from 'icons/weather/10.svg'
 import weather11 from 'icons/weather/11.svg'
 import weather13 from 'icons/weather/13.svg'
 import weather50 from 'icons/weather/50.svg'
+import Today from "./Today";
+
 
 
 class WeatherContainer extends React.Component {
@@ -17,8 +19,10 @@ class WeatherContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            weatherNow: {},
             list: [],
             activeDay: 0,
+            isLoading: true,
             icons: {
                 "01": weather01,
                 "02": weather02,
@@ -34,25 +38,30 @@ class WeatherContainer extends React.Component {
     }
 
     componentDidMount() {
-        // https://api.openweathermap.org/data/2.5/weather?q=Moscow&lang=ru&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27
-        const weatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=Moscow&lang=ru&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27";
+        const weatherNowUrl = "https://api.openweathermap.org/data/2.5/weather?q=Moscow&lang=ru&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27"
+        const weatherURL = "https://api.openweathermap.org/data/2.5/forecast?q=Moscow&lang=ru&units=metric&APPID=a9a3a62789de80865407c0452e9d1c27"
 
-        fetch(weatherURL)
-            .then(res => res.json())
+        Promise.all([
+            fetch(weatherNowUrl).then(r => r.json()),
+            fetch(weatherURL).then(r => r.json()),
+        ])
             .then(data => {
-                console.log(data);
 
                 let obj = []
 
-                data.list.forEach(e => {
+                data[1].list.forEach(e => {
                     obj.push(e)
                 })
 
                 this.setState({
-                    list: obj
+                    weatherNow: data[0],
+                    list: obj,
+                    isLoading: false,
                 })
+
+                console.log(this.state);
             })
-            .catch(err => console.log(err))
+
     }
 
     getDays = () => {
@@ -77,30 +86,40 @@ class WeatherContainer extends React.Component {
         return sortedDays
     }
 
+
     showDay = (index) => {
         this.setState({ activeDay: index })
     }
 
+
     render() {
+        console.log(this.state.list);
         return (
-            <div className="container">
+            <>
+            <div className={`preloader ${this.state.isLoading ? "" : "loaded"}`}></div>
+            {
+                this.state.isLoading === false && <div className="container">
                 <div className="days">
                     {
                         //slice ограничивает вывод на четыре дня вперед
-                        this.getDays().slice(0,5).map((day, i) => {
+                        this.getDays().slice(0, 5).map((day, i) => {
 
-                            return <DayCard index={i} key={i} day={day} showDay={this.showDay} state={this.state}/>
+                            return <DayCard index={i} key={i} day={day} showDay={this.showDay} state={this.state} />
                         })
                     }
                 </div>
 
                 <div className="day">
-                    <div className="today"></div>
+                    { <Today weatherNow={this.state.weatherNow} icons={this.state.icons} />}
+
                     {this.getDays().map((day, i) => {
-                        return i === this.state.activeDay && <SingleDay index={i} key={i} day={day} state={this.state}/>
+                        return i === this.state.activeDay && <SingleDay index={i} key={i} day={day} state={this.state} />
                     })}
                 </div>
             </div>
+            }
+            </>
+            
         )
     }
 }

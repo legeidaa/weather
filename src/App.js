@@ -1,6 +1,6 @@
 
 import WeekContainer from './components/WeekContainer';
-import React from 'react';
+import React, { Suspense } from 'react';
 import './App.css';
 import Clock from './components/Clock';
 import LoginControl from './components/LoginControl';
@@ -11,7 +11,6 @@ import WeatherContainer from './components/weaher/Weather';
 
 
 //http://studyjavascript.blogspot.com/2019/08/react-5.html
-
   
 const PRODUCTS = [
     {category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
@@ -32,7 +31,7 @@ function App() {
 			<Calculator/>
 			<FilterableProductTable products={PRODUCTS} /> */}
 
-			<WeatherContainer/>
+                <WeatherContainer />
 		</div>
 	);
 }
